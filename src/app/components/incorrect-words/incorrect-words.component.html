@@ -1,0 +1,12 @@
+<div class="incorrect-words">
+  <h2>失败单词列表</h2>
+  <p *ngIf="incorrectWords.length === 0">暂无失败记录的单词。</p>
+  <ul *ngIf="incorrectWords.length > 0">
+    <li *ngFor="let entry of incorrectWords">
+      <span>{{ entry.word }}</span>
+      <span class="incorrect-count"> (失败: {{ entry.incorrectCount }})</span>
+      <span *ngIf="entry.pronunciation"> [{{ entry.pronunciation }}]</span>
+      <span *ngIf="entry.definition"> - {{ entry.definition }}</span>
+    </li>
+  </ul>
+</div>
