@@ -12,7 +12,9 @@ import { Subscription } from 'rxjs';
       <!-- <h2>select</h2> -->
       <button (click)="refreshQuiz()">刷新题目</button>
       <div *ngIf="currentQuestion; else noQuestions">
-         <p>单词: {{ currentQuestion!.correct.word }} <span class="incorrect-count" *ngIf="getIncorrectCount(currentQuestion!.correct.word) > 0">(The number of failures : {{ getIncorrectCount(currentQuestion!.correct.word) }})</span></p>
+        <p>单词: {{ currentQuestion!.correct.word }} 
+          <button (click)="readWord(currentQuestion!.correct.word)" style="margin-left: 10px;">🔊</button>
+          <span class="incorrect-count" *ngIf="getIncorrectCount(currentQuestion!.correct.word) > 0">(The number of failures : {{ getIncorrectCount(currentQuestion!.correct.word) }})</span></p>
         <p *ngIf="currentQuestion!.correct.pronunciation">音标: {{ currentQuestion!.correct.pronunciation }}</p>
         <div class="options">
           <button *ngFor="let option of currentQuestion!.options; let i = index"
@@ -95,6 +97,9 @@ export class QuizComponent implements OnInit, OnDestroy {
   nextQuestion(): void {
     this.selectedOption = null;
     this.currentQuestion = this.wordService.generateQuizOptions();
+    if (this.currentQuestion?.correct?.word) {
+      this.readWord(this.currentQuestion?.correct?.word)
+    }
     console.log('QuizComponent: Current question:', this.currentQuestion);
   }
 
@@ -115,5 +120,32 @@ export class QuizComponent implements OnInit, OnDestroy {
   // 新增方法：获取单词的错误次数
   getIncorrectCount(word: string): number {
     return this.wordService.getIncorrectAttempts(word);
+  }
+
+  readWord(word: string): void {
+    if (word) {
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = 'en-US'; // 语言设定美式英语
+
+      const voices = speechSynthesis.getVoices();
+
+      // 优先找 Mac 系统里的 "Samantha" 声音
+      let preferredVoice = voices.find(voice => voice.name === 'Samantha');
+
+      // 如果找不到，再找 "Alex" 或其他美式音色
+      if (!preferredVoice) {
+        preferredVoice = voices.find(voice =>
+          voice.lang === 'en-US' &&
+          (voice.name === 'Alex' || voice.name === 'Victoria' || voice.name === 'Susan')
+        );
+      }
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.rate = 1; // 正常语速
+      speechSynthesis.speak(utterance);
+    }
   }
 }
