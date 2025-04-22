@@ -12,15 +12,16 @@ import { Subscription } from 'rxjs';
       <!-- <h2>select</h2> -->
       <button (click)="refreshQuiz()">刷新题目</button>
       <div *ngIf="currentQuestion; else noQuestions">
-        <p>单词: {{ currentQuestion!.correct.word }} 
-         <button
-          (click)="readWord(currentQuestion!.correct.word)"
-          style="background: none; border: none; cursor: pointer; margin-left: -5px; font-size: 16px; color: #555; transition: color 0.3s;"
-          onmouseover="this.style.color='#007BFF'"
-          onmouseout="this.style.color='#555'"
-        >🔊</button>
-          <span class="incorrect-count" *ngIf="getIncorrectCount(currentQuestion!.correct.word) > 0">(The number of failures : {{ getIncorrectCount(currentQuestion!.correct.word) }})</span></p>
-        <p *ngIf="currentQuestion!.correct.pronunciation">音标: {{ currentQuestion!.correct.pronunciation }}</p>
+        <p style="margin-bottom: 0;">单词: {{ currentQuestion!.correct.word }} 
+          <button
+            (click)="readWord(currentQuestion!.correct.word)"
+            style="background: none; border: none; cursor: pointer; margin-left: -5px; font-size: 16px; color: #555; transition: color 0.3s;"
+            onmouseover="this.style.color='#007BFF'"
+            onmouseout="this.style.color='#555'"
+          >🔊</button>
+            <span class="incorrect-count" *ngIf="getIncorrectCount(currentQuestion!.correct.word) > 0">(The number of failures : {{ getIncorrectCount(currentQuestion!.correct.word) }})</span>
+        </p>
+        <p *ngIf="currentQuestion!.correct.pronunciation" style="margin-top: 0;">音标: {{ currentQuestion!.correct.pronunciation }}</p>
         <div class="options">
           <button *ngFor="let option of currentQuestion!.options; let i = index"
                   (click)="checkAnswer(option)"
