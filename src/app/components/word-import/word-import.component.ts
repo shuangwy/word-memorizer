@@ -77,6 +77,33 @@ export class WordImportComponent {
       }
     }
   }
+  private splitCSVLine(line: string): string[] {
+    const fields: string[] = [];
+    let currentField = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+
+      if (char === '"') {
+        insideQuotes = !insideQuotes;
+        continue;
+      }
+
+      if (char === ',' && !insideQuotes) {
+        fields.push(currentField.trim());
+        currentField = '';
+        continue;
+      }
+
+      currentField += char;
+    }
+
+    // 添加最后一个字段
+    fields.push(currentField.trim());
+
+    return fields;
+  }
 
   private parseCSV(csvText: string): VocabularyEntry[] {
     const lines = csvText.split('\n').filter(line => line.trim() !== '');
@@ -85,38 +112,36 @@ export class WordImportComponent {
     // 跳过标题行
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
-      const fields = line.match(/(?:"[^"]*"|[^,]*)(?:,|$)/g)?.map(field =>
-        field.replace(/^"(.*)"$/, '$1').replace(/,$/, '').trim()
-      );
+      const fields = this.splitCSVLine(line);
 
-      if (!fields || fields.length < 4) {
-        console.log('Skipping invalid line:', line); // 调试日志
+      if (fields.length < 4) {
+        console.log('Skipping invalid line:', line);
         continue;
       }
 
       const [index, word, pronunciation, definition] = fields;
 
-      if (!word || word === 'visher') {
-        console.log('Skipping invalid word:', word); // 调试日志
+      if (!word) {
+        console.log('Skipping invalid word:', word);
         continue;
       }
 
+      // 清理定义字段，移除 HTML 标签并规范化空格
       const cleanDefinition = definition
-        .replace(/<[^>]+>/g, ' ')
-        .replace(/\s+/g, ' ')
-        .replace(/\"/g, '')
+        .replace(/<[^>]+>/g, ' ') // 移除 HTML 标签
+        .replace(/\s+/g, ' ') // 合并多余空格
+        .replace(/"/g, '') // 移除引号
         .trim();
 
       vocabulary.push({
-        word: word.replace(/\"/g, ''),
-        pronunciation: pronunciation?.replace(/\"/g, '') || undefined,
+        word: word.replace(/"/g, ''),
+        pronunciation: pronunciation?.replace(/"/g, '') || undefined,
         definition: cleanDefinition || undefined,
       });
     }
 
     return vocabulary;
   }
-
   private parseJSON(jsonText: string): VocabularyEntry[] {
     const data = JSON.parse(jsonText);
     if (!Array.isArray(data)) {
