@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
       <button (click)="showSection(currentSection)" [class.active]="currentSection">Import</button>
       <button (click)="showFailedList(failedVisible)" [class.active]="failedVisible">Failed List</button>
     </div>
-    <h1>Word Memorizer</h1>
+    <!-- <h1>Word Memorizer</h1> -->
     <app-word-import *ngIf="!!currentSection"></app-word-import>
     <app-quiz></app-quiz>
     <app-progress></app-progress>

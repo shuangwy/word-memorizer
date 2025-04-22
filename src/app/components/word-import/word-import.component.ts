@@ -102,13 +102,14 @@ export class WordImportComponent {
       }
 
       const cleanDefinition = definition
-        .replace(/<[^>]+>/g, '')
+        .replace(/<[^>]+>/g, ' ')
         .replace(/\s+/g, ' ')
+        .replace(/\"/g, '')
         .trim();
 
       vocabulary.push({
-        word,
-        pronunciation: pronunciation || undefined,
+        word: word.replace(/\"/g, ''),
+        pronunciation: pronunciation?.replace(/\"/g, '') || undefined,
         definition: cleanDefinition || undefined,
       });
     }
