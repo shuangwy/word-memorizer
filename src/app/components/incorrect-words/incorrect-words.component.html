@@ -1,5 +1,5 @@
 <div class="incorrect-words">
-  <h2>失败单词列表</h2>
+  <h2 style="padding-top: 0; margin-top: 0">失败单词列表</h2>
   <p *ngIf="incorrectWords.length === 0">暂无失败记录的单词。</p>
   <ul *ngIf="incorrectWords.length > 0">
     <li *ngFor="let entry of incorrectWords">
