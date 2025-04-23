@@ -4,6 +4,7 @@
     "outDir": "./out-tsc/app",
     "types": [],
     "baseUrl": ".",
+    "target": "ES2022",
     "paths": {
       "fs": ["node_modules/@types/node"],
       "path": ["node_modules/@types/node"],
