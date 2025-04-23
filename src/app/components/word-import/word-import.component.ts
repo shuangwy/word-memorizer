@@ -52,7 +52,7 @@ export class WordImportComponent {
           const arrayBuffer = await file.arrayBuffer();
           const tempPath = window.electronAPI.writeFile(arrayBuffer);
           try {
-            await this.wordService.importFromPDF(tempPath);
+            await this.wordService.importFromPDF(file);
             alert('PDF 导入成功！');
           } finally {
             window.electronAPI.unlinkFile(tempPath);
@@ -136,7 +136,7 @@ export class WordImportComponent {
       vocabulary.push({
         word: word.replace(/"/g, ''),
         pronunciation: pronunciation?.replace(/"/g, '') || undefined,
-        definition: cleanDefinition || undefined,
+        definition: cleanDefinition || `${word}_`,
       });
     }
 
