@@ -5,6 +5,7 @@ import { ProgressComponent } from './components/progress/progress.component';
 import { IncorrectWordsComponent } from './components/incorrect-words/incorrect-words.component'
 
 import { CommonModule } from '@angular/common';
+import { WordService, VocabularyEntry } from './services/word.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { CommonModule } from '@angular/common';
    <div class="nav-bar">
       <button (click)="showSection(currentSection)" [class.active]="currentSection">Import</button>
       <button (click)="showFailedList(failedVisible)" [class.active]="failedVisible">Failed List</button>
+      <button (click)="clearAll()" [class.active]="false">Clear All </button>
     </div>
     <!-- <h1>Word Memorizer</h1> -->
     <app-word-import *ngIf="!!currentSection"></app-word-import>
@@ -59,6 +61,7 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class AppComponent {
+  constructor(private wordService: WordService) { }
   currentSection: boolean = true;
   failedVisible: boolean = false
 
@@ -67,5 +70,8 @@ export class AppComponent {
   }
   showFailedList(bool: boolean) {
     this.failedVisible = !bool
+  }
+  clearAll() {
+    this.wordService.clearVocabulary()
   }
 }

@@ -117,5 +117,13 @@ export class WordService {
   getAllIncorrectAttempts(): Map<string, number> {
     return new Map(this.incorrectAttempts);
   }
-
+  clearVocabulary(): void {
+    this.vocabulary = [];
+    this.completedWords.clear();
+    this.incorrectAttempts.clear();
+    console.log('Vocabulary cleared');
+    this.vocabularySubject.next(this.vocabulary);
+    this.completedWordsSubject.next(this.completedWords.size);
+    this.incorrectAttemptsSubject.next(this.incorrectAttempts);
+  }
 }
