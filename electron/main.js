@@ -4,7 +4,7 @@ const path = require('path');
 function createWindow() {
     const win = new BrowserWindow({
         width: 1200,
-        height: 900,
+        height: 1000,
         icon: path.join(__dirname, '../build/avatar_emoji.icns'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // 确保路径正确
