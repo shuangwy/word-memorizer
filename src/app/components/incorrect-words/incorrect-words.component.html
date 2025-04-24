@@ -4,6 +4,22 @@
   <ul *ngIf="incorrectWords.length > 0">
     <li *ngFor="let entry of incorrectWords">
       <span>{{ entry.word }} </span>
+      <button
+        (click)="readWord(entry.word)"
+        style="
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font-size: 16px;
+          color: #555;
+          transition: color 0.3s;
+        "
+        onmouseover="this.style.color='#007BFF'"
+        onmouseout="this.style.color='#555'"
+      >
+        🔊
+      </button>
       <span class="incorrect-count"> (失败: {{ entry.incorrectCount }})</span>
       <span *ngIf="entry.pronunciation"> [{{ entry.pronunciation }}]</span>
       <span *ngIf="entry.definition"> - {{ entry.definition }}</span>
