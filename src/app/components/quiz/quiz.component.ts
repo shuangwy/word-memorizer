@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
       <!-- <h2>select</h2> -->
       <button (click)="refreshQuiz()">刷新题目</button>
       <div *ngIf="currentQuestion; else noQuestions">
-        <p style="margin-bottom: 0;">单词: {{ currentQuestion!.correct.word }} 
+        <p style="margin: 6px 0;">单词: {{ currentQuestion!.correct.word }} 
           <button
             (click)="readWord(currentQuestion!.correct.word)"
             style="background: none; border: none; cursor: pointer; margin-left: -5px; font-size: 16px; color: #555; transition: color 0.3s;"
@@ -21,19 +21,19 @@ import { Subscription } from 'rxjs';
           >🔊</button>
             <span class="incorrect-count" *ngIf="getIncorrectCount(currentQuestion!.correct.word) > 0">(The number of failures : {{ getIncorrectCount(currentQuestion!.correct.word) }})</span>
         </p>
-        <p *ngIf="currentQuestion!.correct.pronunciation" style="margin-top: 0;">音标: {{ currentQuestion!.correct.pronunciation }}</p>
-         <div *ngIf="exampleSentence" style="background: #f9f9f9; border-radius: 5px;">
-        <p style="padding: 0; margin: 0"><strong>例句：</strong> {{ exampleSentence }}
-        <button (click)="playExampleSentence()">🔊 朗读</button>
-        </p>
-        <p style="padding: 0;margin-top:0" *ngIf="exampleTranslation"><strong>翻译：</strong> {{ exampleTranslation }}</p>
-      </div>
+        <p *ngIf="currentQuestion!.correct.pronunciation" style="margin:4px 0 10px 0;">音标: {{ currentQuestion!.correct.pronunciation }}</p>
         <div class="options">
           <button *ngFor="let option of currentQuestion!.options; let i = index"
                   (click)="checkAnswer(option)"
                   [ngClass]="{'correct': selectedOption === option && option === currentQuestion!.correct.definition, 'incorrect': selectedOption === option && option !== currentQuestion!.correct.definition}">
             {{ option }}
           </button>
+        </div>
+          <div *ngIf="exampleSentence" style="background: #f9f9f9; border-radius: 5px;">
+          <p style="padding: 0; margin: 0"><strong>例句：</strong> {{ exampleSentence }}
+          <button (click)="playExampleSentence()">🔊 朗读</button>
+          </p>
+          <p style="padding: 0;margin-top:0" *ngIf="exampleTranslation"><strong>翻译：</strong> {{ exampleTranslation }}</p>
         </div>
         <button (click)="nextQuestion()" [disabled]="!selectedOption">下一题</button>
       </div>
@@ -58,12 +58,12 @@ import { Subscription } from 'rxjs';
         margin-bottom: 20px;
       }
       button {
-        padding: 10px;
+        padding:8px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         background: #f0f0f0;
-        margin-bottom: 10px;
+        margin-bottom: 0;
       }
       button:hover {
         background: #e0e0e0;
