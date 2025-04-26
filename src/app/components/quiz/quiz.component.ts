@@ -22,6 +22,12 @@ import { Subscription } from 'rxjs';
             <span class="incorrect-count" *ngIf="getIncorrectCount(currentQuestion!.correct.word) > 0">(The number of failures : {{ getIncorrectCount(currentQuestion!.correct.word) }})</span>
         </p>
         <p *ngIf="currentQuestion!.correct.pronunciation" style="margin-top: 0;">音标: {{ currentQuestion!.correct.pronunciation }}</p>
+         <div *ngIf="exampleSentence" style="background: #f9f9f9; border-radius: 5px;">
+        <p style="padding: 0; margin: 0"><strong>例句：</strong> {{ exampleSentence }}
+        <button (click)="playExampleSentence()">🔊 朗读</button>
+        </p>
+        <p style="padding: 0;margin-top:0" *ngIf="exampleTranslation"><strong>翻译：</strong> {{ exampleTranslation }}</p>
+      </div>
         <div class="options">
           <button *ngFor="let option of currentQuestion!.options; let i = index"
                   (click)="checkAnswer(option)"
@@ -82,6 +88,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   currentQuestion: { correct: VocabularyEntry; options: string[] } | null = null;
   selectedOption: string | null = null;
   private vocabularySubscription: Subscription | undefined;
+  exampleSentence: string | null = null;
+  exampleTranslation: string | null = null;
 
   constructor(private wordService: WordService) { }
 
@@ -103,8 +111,12 @@ export class QuizComponent implements OnInit, OnDestroy {
   nextQuestion(): void {
     this.selectedOption = null;
     this.currentQuestion = this.wordService.generateQuizOptions();
+    this.exampleSentence = null;
+    this.exampleTranslation = null;
+
     if (this.currentQuestion?.correct?.word) {
       this.readWord(this.currentQuestion?.correct?.word)
+      this.fetchExampleSentence(this.currentQuestion.correct.word); // 👈 加这句，自动查例句
     }
     console.log('QuizComponent: Current question:', this.currentQuestion);
   }
@@ -153,6 +165,79 @@ export class QuizComponent implements OnInit, OnDestroy {
 
       utterance.rate = 1; // 正常语速
       speechSynthesis.speak(utterance);
+    }
+  }
+  fetchExampleSentence(word: string): void {
+    if (!word) return;
+
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+      .then(response => response.json())
+      .then(data => {
+        if (!Array.isArray(data) || !data[0]?.meanings) {
+          console.error('No example sentence found');
+          this.exampleSentence = null;
+          this.exampleTranslation = null;
+          return;
+        }
+
+        let exampleSentence: string | undefined;
+        for (const meaning of data[0].meanings) {
+          for (const definition of meaning.definitions) {
+            if (definition.example) {
+              exampleSentence = definition.example;
+              break;
+            }
+          }
+          if (exampleSentence) break;
+        }
+
+        if (exampleSentence) {
+          this.exampleSentence = exampleSentence;
+          this.translateSentence(exampleSentence); // 顺便翻译
+        } else {
+          console.error('No example sentence found for', word);
+          this.exampleSentence = null;
+          this.exampleTranslation = null;
+        }
+      })
+      .catch(error => {
+        console.error('Failed to fetch example sentence:', error);
+        this.exampleSentence = null;
+        this.exampleTranslation = null;
+      });
+  }
+
+  playExampleSentence(): void {
+    if (this.exampleSentence) {
+      const utterance = new SpeechSynthesisUtterance(this.exampleSentence);
+      utterance.lang = 'en-US'; // 美式英语
+      const voices = speechSynthesis.getVoices();
+
+      let preferredVoice = voices.find(voice => voice.name === 'Samantha')
+        || voices.find(voice => voice.lang === 'en-US');
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.rate = 1;
+      speechSynthesis.speak(utterance);
+    }
+  }
+  async translateSentence(sentence: string): Promise<void> {
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${encodeURIComponent(sentence)}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (Array.isArray(data) && Array.isArray(data[0]) && Array.isArray(data[0][0])) {
+        this.exampleTranslation = data[0].map((item: any) => item[0]).join('');
+      } else {
+        this.exampleTranslation = '';
+      }
+    } catch (error) {
+      console.error('Translation failed:', error);
+      this.exampleTranslation = '';
     }
   }
 }
