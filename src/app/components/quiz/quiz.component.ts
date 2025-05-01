@@ -38,7 +38,7 @@ import { Subscription } from 'rxjs';
         <button (click)="nextQuestion()" [disabled]="!selectedOption">下一题</button>
       </div>
       <ng-template #noQuestions>
-        <p>词汇表中没有足够的单词（需要至少 4 个，且需有释义）。</p>
+        <p>词汇表中没有足够的单词（需要至少 5 个，且需有释义）。</p>
       </ng-template>
     </div>
   `,

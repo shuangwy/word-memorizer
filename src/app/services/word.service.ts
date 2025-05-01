@@ -143,7 +143,7 @@ export class WordService {
   }
   generateQuizOptions(): { correct: VocabularyEntry; options: string[] } | null {
     const validEntries = this.vocabulary.filter(entry => this.validateVocabularyEntry(entry));
-    if (validEntries.length < 4) {
+    if (validEntries.length < 5) {
       logger.error('Not enough valid entries for quiz, required: 4, available:', validEntries.length);
       return null;
     }
@@ -154,7 +154,7 @@ export class WordService {
     const options: string[] = [correct.definition!];
     const otherEntries = validEntries.filter((_, index) => index !== correctIndex);
     const shuffledIndices = Array.from({ length: otherEntries.length }, (_, i) => i);
-    for (let i = shuffledIndices.length - 1; i > 0 && options.length < 4; i--) {
+    for (let i = shuffledIndices.length - 1; i > 0 && options.length < 5; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
       const definition = otherEntries[shuffledIndices[i]].definition!;
